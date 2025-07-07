@@ -1,0 +1,62 @@
+scenes_list=(
+  "Beechwood_0_garden"
+  "Beechwood_0_int"
+  "Beechwood_1_int"
+  "Benevolence_0_int"
+  "Benevolence_1_int"
+  "Benevolence_2_int"
+  "Ihlen_0_int"
+  "Ihlen_1_int"
+  "Merom_0_garden"
+  "Merom_0_int"
+  "Merom_1_int"
+  "Pomaria_0_garden"
+  "Pomaria_0_int"
+  "Pomaria_1_int"
+  "Pomaria_2_int"
+  "Rs_garden"
+  "Rs_int"
+  "Wainscott_0_garden"
+  "Wainscott_0_int"
+  "Wainscott_1_int"
+  "grocery_store_asian"
+  "grocery_store_cafe"
+  "grocery_store_convenience"
+  "grocery_store_half_stocked"
+  "hall_arch_wood"
+  "hall_conference_large"
+  "hall_glass_ceiling"
+  "hall_train_station"
+  "hotel_gym_spa"
+  "hotel_suite_large"
+  "hotel_suite_small"
+  "house_double_floor_lower"
+  "house_double_floor_upper"
+  "house_single_floor"
+  "office_bike"
+  "office_cubicles_left"
+  "office_cubicles_right"
+  "office_large"
+  "office_vendor_machine"
+  "restaurant_asian"
+  "restaurant_brunch"
+  "restaurant_cafeteria"
+  "restaurant_diner"
+  "restaurant_hotel"
+  "restaurant_urban"
+  "school_biology"
+  "school_chemistry"
+  "school_computer_lab_and_infirmary"
+  "school_geography"
+  "school_gym"
+)
+
+for scene_name in "${scenes_list[@]}"
+do
+    wget https://behavior.stanford.edu/omnigibson/assets/scenes/scene-views/$scene_name.png
+    
+    sleep 2s
+
+    # sleep 0.5s;
+    # tail -f ${results_file}
+done

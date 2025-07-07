@@ -1,0 +1,28 @@
+(define (problem moving_electric_item-0)
+    (:domain omnigibson)
+
+    (:objects
+        electric_fan.n.01_1 - electric_fan.n.01
+    	sofa.n.01_1 - sofa.n.01
+    	floor.n.01_1 - floor.n.01
+    	window.n.01_1 - window.n.01
+    	shelf.n.01_1 - shelf.n.01
+    	agent.n.01_1 - agent.n.01
+    )
+    
+    (:init 
+        (toggled_on electric_fan.n.01_1)
+        (ontop electric_fan.n.01_1 sofa.n.01_1) 
+        (inroom floor.n.01_1 living_room) 
+        (inroom window.n.01_1 living_room) 
+        (inroom sofa.n.01_1 living_room) 
+        (inroom shelf.n.01_1 living_room) 
+        (ontop agent.n.01_1 floor.n.01_1)
+    )
+    
+    (:goal 
+        (and 
+            (ontop ?electric_fan.n.01_1 ?floor.n.01_1)
+        )
+    )
+)

@@ -1,0 +1,16 @@
+__pycache__/
+
+logs/
+
+work_dir*/
+results/
+entrypoints/env.sh
+
+data/scenes/
+
+*.log
+*.png
+
+checkpoints
+
+**/slurm-*.out

@@ -1,0 +1,29 @@
+(define (problem clean_an_electric_kettle-0)
+    (:domain omnigibson)
+
+    (:objects
+        mug.n.04_1 - mug.n.04
+     	electric_kettle.n.01_1 - electric_kettle.n.01
+        power_strip.n.01_1 - power_strip.n.01
+        water.n.06_1 - water.n.06
+        countertop.n.01_1 - countertop.n.01
+    	floor.n.01_1 - floor.n.01
+    	agent.n.01_1 - agent.n.01
+    )
+    
+    (:init 
+        (ontop mug.n.04_1 countertop.n.01_1)
+        (ontop electric_kettle.n.01_1 countertop.n.01_1)
+        (ontop power_strip.n.01_1 countertop.n.01_1)
+        (filled electric_kettle.n.01_1 water.n.06_1)
+        (inroom floor.n.01_1 kitchen) 
+        (inroom countertop.n.01_1 kitchen)
+        (ontop agent.n.01_1 floor.n.01_1)
+    )
+    
+    (:goal 
+        (and 
+            (filled ?mug.n.04_1 ?water.n.06_1)
+        )
+    )
+)
