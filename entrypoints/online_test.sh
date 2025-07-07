@@ -1,6 +1,6 @@
 #!/bin/bash
-TASK_NAME=$1
-SCENE_NAME=$2
+TASK_NAME=$1 # clean_tennis_balls
+SCENE_NAME=$2 # Beechwood_1_int
 MODEL_NAME_OR_PATH=$3
 
 # export OMNIGIBSON_HEADLESS=1
