@@ -7,9 +7,11 @@ results/
 entrypoints/env.sh
 
 data/scenes/
+data/bddl
 
 *.log
-*.png
+*.ipynb
+*.tar.gz
 
 checkpoints
 
