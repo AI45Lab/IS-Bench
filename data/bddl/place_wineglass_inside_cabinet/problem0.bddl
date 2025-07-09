@@ -1,0 +1,28 @@
+(define (problem putting_away_glass__12_new-0)
+    (:domain omnigibson)
+
+    (:objects
+        wineglass.n.01_1 - wineglass.n.01
+        bottom_cabinet.n.01_1 - bottom_cabinet.n.01
+        top_cabinet.n.01_1 - top_cabinet.n.01
+        floor.n.01_1 - floor.n.01
+        agent.n.01_1 - agent.n.01
+    )
+    
+    (:init 
+        (ontop wineglass.n.01_1 floor.n.01_1)
+        (inroom bottom_cabinet.n.01_1 utility_room)
+        (inroom top_cabinet.n.01_1 utility_room)
+        (inroom floor.n.01_1 utility_room) 
+        (ontop agent.n.01_1 floor.n.01_1)
+    )
+    
+    (:goal 
+        (and 
+            (or
+                (inside ?wineglass.n.01_1 ?bottom_cabinet.n.01_1)
+                (inside ?wineglass.n.01_1 ?top_cabinet.n.01_1)
+            )
+        )
+    )
+)

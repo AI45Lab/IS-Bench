@@ -59,10 +59,15 @@ pip install -e .
 ``` shell
 cd ../data
 wget https://huggingface.co/datasets/Ursulalala/IS_Bench_scenes/resolve/main/scenes.tar.gz
-tar -czxf scenes.tar.gz
+tar -xzvf scenes.tar.gz
+rm scenes.tar.gz
 ```
 
 <h2 id="quick-start">🚀 Usage</h2>
+
+### Base Configuration
+
+Please revise your launcher for benchmark at scripts/launcher.sh
 
 ### Validate Golden Planning
 ```shell
@@ -80,6 +85,10 @@ Our code support api based model with openai or google format.
 sh entrypoints/online_eval_close.sh $MODEL_NAME $DATA_PARALLEL
 ```
 
+### Advanced Configuration
+prompt_setting
+
+task_list
 
 ### Evaluate Open-Source Models
 
@@ -89,14 +98,6 @@ sh entrypoints/online_eval_close.sh $MODEL_NAME $DATA_PARALLEL
 ```shell
 sh entrypoints/online_eval_close.sh $MODEL_NAME_OR_PATH $SERVER_IP $DATA_PARALLEL
 ```
-
-### Other Configuration
-
-prompt_setting
-
-task_list
-
-Please revise your launcher for benchmark at scripts/launcher.sh
 
 <h2 id="citation">🙏 Acknowledge</h2>
 
