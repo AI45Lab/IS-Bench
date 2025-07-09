@@ -7,7 +7,6 @@ results/
 entrypoints/env.sh
 
 data/scenes/
-data/bddl
 
 *.log
 *.ipynb
