@@ -24,7 +24,7 @@ WORK_DIR=./results/golden_plan
 
 python -m og_ego_prim.cli.online_benchmark_all \
     --data_parallel $DATA_PARALLEL \
-    --task_list entrypoints/task_list.txt \
+    --task_list entrypoints/task_list_test.txt \
     --work_dir $WORK_DIR \
     2>&1 | tee -a "$LOG_FILE" > /dev/null & 
 
