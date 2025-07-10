@@ -53,6 +53,8 @@ class OnlineBenchmark(Benchmark):
         debug: bool,
         ego_view: bool, 
         draw_bbox_2d: bool,
+        use_initial_setup: bool,
+        use_self_caption: bool,
         eval_process_safety: bool,
         eval_termination_safety: bool,
         eval_awareness: bool, 
@@ -63,6 +65,8 @@ class OnlineBenchmark(Benchmark):
         self.env = og.Environment(configs=self.env_config)
         self.ego_view = ego_view
         self.draw_bbox_2d = draw_bbox_2d
+        self.use_initial_setup = use_initial_setup
+        self.use_self_caption = use_self_caption
             
         camera_config = os.path.join(CAMERAS, 'camera.json')
         with open(camera_config, 'r') as f:

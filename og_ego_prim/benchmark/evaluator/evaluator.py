@@ -221,7 +221,6 @@ class Evaluator:
             temperature=0.0
         )
         print(completion.choices[0].message.content) 
-        # import ipdb; ipdb.set_trace()
         res = self.llm_response_to_json(str(completion.choices[0].message.content))
         if "openai.com" in os.environ.get("OPENAI_API_BASE"):
             os.environ["http_proxy"] = "http://10.1.20.57:23128"
@@ -250,7 +249,6 @@ class Evaluator:
             temperature=0.6
         )
         print(completion.choices[0].message.content) 
-        # import ipdb; ipdb.set_trace()
         res = self.llm_response_to_json(str(completion.choices[0].message.content))            
 
         return res

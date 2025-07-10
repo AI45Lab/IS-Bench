@@ -1,2 +1,0 @@
-removing_lint_from_dryer
-clean_tennis_balls

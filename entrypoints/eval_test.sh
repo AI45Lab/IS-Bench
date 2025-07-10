@@ -22,7 +22,10 @@ LAUNCHER+=(
     "--scene" $SCENE_NAME
     "--model" $MODEL_NAME_OR_PATH
     "--draw_bbox_2d"
+    "--prompt_setting" "v1" 
     # "--not_eval_awareness"
+    # "--use_initial_setup"
+    # "--use_self_caption"
     # "--debug"
 )
 

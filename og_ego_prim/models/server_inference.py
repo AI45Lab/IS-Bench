@@ -23,17 +23,18 @@ class ServerClient(BaseClient):
         if model_type == "local":
             if "http_proxy" in os.environ:
                 del os.environ["http_proxy"], os.environ["HTTP_PROXY"], os.environ["https_proxy"], os.environ["HTTPS_PROXY"]
-        else:
-            if "openai.com" in api_base:
-                os.environ["http_proxy"] = "http://10.1.20.57:23128"
-                os.environ["https_proxy"] = "http://10.1.20.57:23128"
-                os.environ["HTTP_PROXY"] = "http://10.1.20.57:23128"
-                os.environ["HTTPS_PROXY"] = "http://10.1.20.57:23128"
-            else: 
-                os.environ['HTTP_PROXY']='http://luxiaoya:kwMUZpsjfkRdN6rANEJp45sBoXK9gP1uLzQbwgerNbixbWFj3iOQMjTynOq8@10.1.20.51:23128/'
-                os.environ['HTTPS_PROXY']='http://luxiaoya:kwMUZpsjfkRdN6rANEJp45sBoXK9gP1uLzQbwgerNbixbWFj3iOQMjTynOq8@10.1.20.51:23128/'
-                os.environ['http_proxy']='http://luxiaoya:kwMUZpsjfkRdN6rANEJp45sBoXK9gP1uLzQbwgerNbixbWFj3iOQMjTynOq8@10.1.20.51:23128/'
-                os.environ['https_proxy']='http://luxiaoya:kwMUZpsjfkRdN6rANEJp45sBoXK9gP1uLzQbwgerNbixbWFj3iOQMjTynOq8@10.1.20.51:23128/'
+        ''' add proxy for close-source model'''
+        # else:
+        #     if "openai.com" in api_base:
+        #         os.environ["http_proxy"] = "http://10.1.20.57:23128"
+        #         os.environ["https_proxy"] = "http://10.1.20.57:23128"
+        #         os.environ["HTTP_PROXY"] = "http://10.1.20.57:23128"
+        #         os.environ["HTTPS_PROXY"] = "http://10.1.20.57:23128"
+        #     else: 
+        #         os.environ['HTTP_PROXY']='http://luxiaoya:kwMUZpsjfkRdN6rANEJp45sBoXK9gP1uLzQbwgerNbixbWFj3iOQMjTynOq8@10.1.20.51:23128/'
+        #         os.environ['HTTPS_PROXY']='http://luxiaoya:kwMUZpsjfkRdN6rANEJp45sBoXK9gP1uLzQbwgerNbixbWFj3iOQMjTynOq8@10.1.20.51:23128/'
+        #         os.environ['http_proxy']='http://luxiaoya:kwMUZpsjfkRdN6rANEJp45sBoXK9gP1uLzQbwgerNbixbWFj3iOQMjTynOq8@10.1.20.51:23128/'
+        #         os.environ['https_proxy']='http://luxiaoya:kwMUZpsjfkRdN6rANEJp45sBoXK9gP1uLzQbwgerNbixbWFj3iOQMjTynOq8@10.1.20.51:23128/'
 
         if 'gemini_direct' in model_name.lower():
             self.client = genai.Client(

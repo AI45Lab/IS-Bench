@@ -28,7 +28,7 @@ python -m og_ego_prim.cli.online_benchmark_all \
     --model $MODEL_NAME_OR_PATH \
     --local_llm_serve \
     --local_serve_ip $SERVER_IP \
-    --prompt_setting 'v2' \
+    --prompt_setting 'v1' \
     --draw_bbox_2d \
     2>&1 | tee -a "$LOG_FILE" > /dev/null & 
 

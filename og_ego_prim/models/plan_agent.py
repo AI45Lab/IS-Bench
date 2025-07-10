@@ -54,6 +54,8 @@ class PlanningAgent:
         local_serve_ip: str,
         local_serve_key: str,
         prompt_setting: str,
+        use_initial_setup: bool = False,
+        use_self_caption: bool = False,
         retry: int = 3,
         verbose: bool = True,
         debug: bool = False,
@@ -76,6 +78,8 @@ class PlanningAgent:
         self.local_serve_ip = local_serve_ip
         self.local_serve_key = local_serve_key
         self.prompt_setting = prompt_setting
+        self.use_initial_setup = use_initial_setup
+        self.use_self_caption = use_self_caption
 
         # initialize data 
         self.task_instruction, self.objects_str, self.initial_setup_str, self.object_abilities_str, self.wash_rules_str, self.goal_bddl_str, self.safety_tips_str = self.load_info_data()
@@ -140,123 +144,103 @@ class PlanningAgent:
                 [history['history_text'] for history in self.tracker.plans]
             )
             
-        
+        if not self.use_initial_setup and not self.use_self_caption:
+            if self.prompt_setting == 'v0': # v0: no safety reminder
+                prompt = V0StepPlanningPrompt.format(
+                    objects_str=self.objects_str, 
+                    task_instruction=self.task_instruction, 
+                    object_abilities_str=self.object_abilities_str, 
+                    task_goals=self.goal_bddl_str,
+                    wash_rules_str=self.wash_rules_str,
+                    history_actions=history_plans
+                )
+            elif self.prompt_setting == 'v1': # v0 + implicit safety reminder
+                prompt = V1StepPlanningPrompt.format(
+                    objects_str=self.objects_str, 
+                    task_instruction=self.task_instruction, 
+                    object_abilities_str=self.object_abilities_str, 
+                    task_goals=self.goal_bddl_str,
+                    wash_rules_str=self.wash_rules_str,
+                    history_actions=history_plans
+                )
+            elif self.prompt_setting == 'v2': # v0 + cot safety reminder
+                assert self.tracker.awareness is not None and 'content' in self.tracker.awareness
+                awareness = self.tracker.awareness['content']
+                prompt = V2StepPlanningPrompt.format(
+                    objects_str=self.objects_str, 
+                    task_instruction=self.task_instruction, 
+                    object_abilities_str=self.object_abilities_str, 
+                    task_goals=self.goal_bddl_str,
+                    wash_rules_str=self.wash_rules_str,
+                    history_actions=history_plans,
+                    awareness=awareness
+                )
+            elif self.prompt_setting == 'v3': # v0 + explicit safety reminder
+                prompt = V3StepPlanningPrompt.format(
+                    objects_str=self.objects_str, 
+                    task_instruction=self.task_instruction, 
+                    object_abilities_str=self.object_abilities_str, 
+                    task_goals=self.goal_bddl_str,
+                    wash_rules_str=self.wash_rules_str,
+                    safety_tips=self.safety_tips_str,
+                    history_actions=history_plans
+                )
+            else:  
+                raise Exception('Wrong prompt setting.') 
+        else:
+            if self.use_initial_setup:
+                scene_description = self.initial_setup_str
+            else:
+                assert self.tracker.caption is not None and 'content' in self.tracker.caption
+                scene_description = self.tracker.caption['content']
 
-        if self.prompt_setting == 'default':
-            prompt = DefaultPlanningPrompt.format(
-                objects_str=self.objects_str, 
-                initial_setup_str=self.initial_setup_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-                history_actions=history_plans
-            )
-        elif self.prompt_setting == 'v0': # v0: 默认input，L0
-            prompt = V0StepPlanningPrompt.format(
-                objects_str=self.objects_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-                history_actions=history_plans
-            )
-        elif self.prompt_setting == 'v1': # v0 + bbox
-            prompt = V0StepPlanningPrompt.format(
-                objects_str=self.objects_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-                history_actions=history_plans
-            )
-        elif self.prompt_setting == 'v2': # v0 + bbox + Implicit
-            prompt = V2StepPlanningPrompt.format(
-                objects_str=self.objects_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-                history_actions=history_plans
-            )
-        elif self.prompt_setting == 'v3': # v0 + bbox + Implicit + CoT
-            assert self.tracker.awareness is not None and 'content' in self.tracker.awareness
-            awareness = self.tracker.awareness['content']
-            
-            prompt = V3StepPlanningPrompt.format(
-                objects_str=self.objects_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-                history_actions=history_plans,
-                awareness=awareness
-            )
-            
-        elif self.prompt_setting == 'v4': # v0 + bbox + Explicit
-            prompt = V4StepPlanningPrompt.format(
-                objects_str=self.objects_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-                safety_tips=self.safety_tips_str,
-                history_actions=history_plans
-            )
-        elif self.prompt_setting == 't1': # v0 + initial_setup
-            prompt = T1StepPlanningPrompt.format(
-                objects_str=self.objects_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-                history_actions=history_plans,
-                initial_setup_str=self.initial_setup_str, 
-            )
-        elif self.prompt_setting == 't2': # v0 + initial_setup + Implicit
-            prompt = T2StepPlanningPrompt.format(
-                objects_str=self.objects_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-                history_actions=history_plans,
-                initial_setup_str=self.initial_setup_str, 
-            )
-        elif self.prompt_setting == 't3': # v0 + initial_setup + Implicit + CoT
-            prompt = T3StepPlanningPrompt.format(
-                objects_str=self.objects_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-                history_actions=history_plans,
-                initial_setup_str=self.initial_setup_str, 
-            )
-        elif self.prompt_setting == 't4': # v0 + initial_setup + Explicit
-            prompt = T4StepPlanningPrompt.format(
-                objects_str=self.objects_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-                history_actions=history_plans,
-                safety_tips=self.safety_tips_str,
-                initial_setup_str=self.initial_setup_str 
-            )
-            
-        elif self.prompt_setting == 'c2': # v0 + self-caption
-            caption = self.tracker.awareness['content']
-            
-            prompt = T2StepPlanningPrompt.format(
-                objects_str=self.objects_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-                history_actions=history_plans,
-                initial_setup_str=caption
-            )
+            if self.prompt_setting == 'v0': 
+                prompt = T0StepPlanningPrompt.format(
+                    objects_str=self.objects_str, 
+                    task_instruction=self.task_instruction, 
+                    object_abilities_str=self.object_abilities_str, 
+                    task_goals=self.goal_bddl_str,
+                    wash_rules_str=self.wash_rules_str,
+                    history_actions=history_plans,
+                    scene_description=scene_description, 
+                )
+            elif self.prompt_setting == 'v1': 
+                prompt = T1StepPlanningPrompt.format(
+                    objects_str=self.objects_str, 
+                    task_instruction=self.task_instruction, 
+                    object_abilities_str=self.object_abilities_str, 
+                    task_goals=self.goal_bddl_str,
+                    wash_rules_str=self.wash_rules_str,
+                    history_actions=history_plans,
+                    scene_description=scene_description, 
+                )
+            elif self.prompt_setting == 'v2':
+                assert self.tracker.awareness is not None and 'content' in self.tracker.awareness
+                awareness = self.tracker.awareness['content'] 
+                prompt = T2StepPlanningPrompt.format(
+                    objects_str=self.objects_str, 
+                    task_instruction=self.task_instruction, 
+                    object_abilities_str=self.object_abilities_str, 
+                    task_goals=self.goal_bddl_str,
+                    wash_rules_str=self.wash_rules_str,
+                    history_actions=history_plans,
+                    scene_description=scene_description, 
+                    awareness=awareness
+                )
+            elif self.prompt_setting == 'v3': 
+                prompt = T3StepPlanningPrompt.format(
+                    objects_str=self.objects_str, 
+                    task_instruction=self.task_instruction, 
+                    object_abilities_str=self.object_abilities_str, 
+                    task_goals=self.goal_bddl_str,
+                    wash_rules_str=self.wash_rules_str,
+                    history_actions=history_plans,
+                    safety_tips=self.safety_tips_str,
+                    scene_description=scene_description 
+                )
+            else:  
+                raise Exception('Wrong prompt setting.') 
+        
         return prompt
     
 
@@ -296,34 +280,34 @@ class PlanningAgent:
             caution = plan['caution']
         return operator.lower(), params, caution
     
+    def generate_caption(self, use_obs=True) -> str:
+        _, obs = self._get_last_execution_info(use_obs)
+        prompt_cp = GenerateCaptionPrompt.format(
+                objects_str=self.objects_str, 
+                task_instruction=self.task_instruction, 
+                object_abilities_str=self.object_abilities_str, 
+                task_goals=self.goal_bddl_str,
+                wash_rules_str=self.wash_rules_str,
+            )
+        output_caption = self.client.model(prompt_cp, image_file=obs)
+        return output_caption
+        
     def generate_awareness(self, use_obs=True) -> str:
         _, obs = self._get_last_execution_info(use_obs)
-        if self.prompt_setting == 't2': 
+        if self.use_initial_setup or self.use_self_caption: 
+            if self.use_initial_setup:
+                scene_description = self.initial_setup_str
+            else:
+                assert self.tracker.caption is not None and 'content' in self.tracker.caption
+                scene_description = self.tracker.caption['content']
             prompt_sa = T2GenerateAwarenessPrompt.format(
                 objects_str=self.objects_str, 
                 task_instruction=self.task_instruction, 
                 object_abilities_str=self.object_abilities_str, 
                 task_goals=self.goal_bddl_str,
                 wash_rules_str=self.wash_rules_str,
-                initial_setup=self.initial_setup_str, 
+                scene_description=scene_description, 
             )
-        elif self.prompt_setting == 'c2': 
-            prompt_cp = GenerateCaptionPrompt.format(
-                objects_str=self.objects_str, 
-                task_instruction=self.task_instruction, 
-                object_abilities_str=self.object_abilities_str, 
-                task_goals=self.goal_bddl_str,
-                wash_rules_str=self.wash_rules_str,
-            )
-            output_caption = self.client.model(prompt_cp, image_file=obs)
-            prompt_sa = T2GenerateAwarenessPrompt.format(
-                    objects_str=self.objects_str, 
-                    task_instruction=self.task_instruction, 
-                    object_abilities_str=self.object_abilities_str, 
-                    task_goals=self.goal_bddl_str,
-                    wash_rules_str=self.wash_rules_str,
-                    initial_setup=output_caption
-                )
         else:
             prompt_sa = GenerateAwarenessPrompt.format(
                     objects_str=self.objects_str, 

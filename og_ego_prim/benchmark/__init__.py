@@ -11,6 +11,8 @@ def build_benchmark(
     scene: str = None, 
     ego_view: bool = False,
     draw_bbox_2d: bool = False,
+    use_initial_setup: bool = False,
+    use_self_caption: bool = False,
     online_object_sampling: bool = None,
     offline_mode: bool = False,
     debug: bool = False, 
@@ -47,6 +49,8 @@ def build_benchmark(
         task_kwargs.update({
             'ego_view': ego_view,
             'draw_bbox_2d': draw_bbox_2d,
+            'use_initial_setup': use_initial_setup,
+            'use_self_caption': use_self_caption,
             'eval_process_safety': eval_process_safety,
             'eval_termination_safety': eval_termination_safety,
             'eval_execution': eval_execution,
