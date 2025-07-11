@@ -9,7 +9,10 @@
   "scene_info": {
     "room": "kitchen",
     "default_scene_model": "Beechwood_0_int",
-    "scene_models": [],
+    "scene_models": [
+      "Beechwood_0_int",
+      "Beechwood_0_garden"
+    ],
     "online_object_sampling": false
   },
   "planning_context": {

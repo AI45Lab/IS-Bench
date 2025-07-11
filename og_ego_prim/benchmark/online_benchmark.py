@@ -296,8 +296,7 @@ class OnlineBehaviorBenchmark(OnlineBenchmark):
 
         env_config['scene'].update({
             'scene_model': scene,
-            # 'load_task_relevant_only': True if self.debug else False,
-            'load_task_relevant_only': True,
+            'load_task_relevant_only': True if self.debug else False,
             'not_load_object_categories': ['ceilings', 'roof']
         })
 
