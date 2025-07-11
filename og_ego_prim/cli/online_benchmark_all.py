@@ -221,7 +221,7 @@ def benchmark_all(
     metric = Metric()
 
     task_queue = deque([(task, 0) for task in all_tasks])
-    pbar = tqdm(total=len(task_queue), desc='EPS-Bench')
+    pbar = tqdm(total=len(task_queue), desc='IS-Bench')
 
     with ProcessPoolExecutor(max_workers=data_parallel) as executor:
         while len(task_queue) > 0:
