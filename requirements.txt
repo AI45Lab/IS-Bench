@@ -1,0 +1,4 @@
+google-genai
+openai
+transformers==4.51.3
+ipdb

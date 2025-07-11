@@ -14,19 +14,18 @@ if [[ -v PARTITION ]]; then
     echo "Submit to $PARTITION"
 fi
 
-MODEL_NAME_OR_PATH=$1
+MODEL_NAME=$1
 DATA_PARALLEL=${2:-1}
 
-MODEL_NAME=$(basename $MODEL_NAME_OR_PATH)
 WORK_DIR=./results/$MODEL_NAME
 
 python -m og_ego_prim.cli.online_benchmark_all \
     --data_parallel $DATA_PARALLEL \
-    --task_list entrypoints/task_list_test.txt \
+    --task_list entrypoints/task_list.txt \
     --work_dir $WORK_DIR \
-    --model $MODEL_NAME_OR_PATH \
+    --model $MODEL_NAME \
     --draw_bbox_2d \
-    --prompt_setting 'v2' \
+    --prompt_setting 'v1' \
     2>&1 | tee -a "$LOG_FILE" > /dev/null & 
 
 sleep 0.5s

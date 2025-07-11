@@ -39,7 +39,7 @@ GPU: NVIDIA RTX 2080+
 ```
 
 1. Install Omnigibson
-``` shell
+``` bash
 conda create -n isbench python=3.10 pytorch torchvision torchaudio pytorch-cuda=12.1 "numpy<2" -c pytorch -c nvidia
 conda activate isbench
 pip install omnigibson==1.1.1
@@ -49,14 +49,15 @@ python -m omnigibson.install    # install omnigibson assets and datasets
 If you want to install Omnigibson in Docker, please see this [document](https://behavior.stanford.edu/omnigibson/getting_started/installation.html#__tabbed_1_1).
 
 2. Download Source Code and BDDL of IS-Bench
-``` shell
+``` bash
 git clone https://github.com/AI45Lab/IS-Bench
+pip install -r requirements.txt
 cd IS-Bench/bddl
 pip install -e .
 ```
 
 3. Download Scene Dataset
-``` shell
+``` bash
 cd ../data
 wget https://huggingface.co/datasets/Ursulalala/IS_Bench_scenes/resolve/main/scenes.tar.gz
 tar -xzvf scenes.tar.gz
@@ -65,43 +66,61 @@ rm scenes.tar.gz
 
 <h2 id="quick-start">🚀 Usage</h2>
 
-### Base Configuration
-
-Please revise your launcher for benchmark at scripts/launcher.sh
-
-### Validate Golden Planning
-```shell
-sh entrypoints/online_validate_gold.sh
-```
+If you are using slurm to run IS-Bench, please first revise your launcher for benchmark at scripts/launcher.sh
 
 ### Evaluate Close-Source Models
-Our code support api based model with openai or google format.
+Our code supports api-based model with openai or google-genai format.
 
 1. Configure api_base and api_key in `entrypoints/env.sh`
-2. Add proxy at `og_ego_prim/models/server_inference.py`
-3. Execute the following script:
+2. Add proxy at `og_ego_prim/models/server_inference.py` if needed.
+3. Execute the following script: 
 
-```shell
-sh entrypoints/online_eval_close.sh $MODEL_NAME $DATA_PARALLEL
+```bash
+bash entrypoints/eval_close.sh $MODEL_NAME $DATA_PARALLEL
 ```
-
-### Advanced Configuration
-prompt_setting
-
-task_list
 
 ### Evaluate Open-Source Models
 
 1. Execute `entrypoints/vllm_serve.sh` to deploy a serve for the evaluated model and check the serve ip.
 
+```bash
+bash entrypoints/vllm_serve.sh $LOCAL_MODEL_PATH $GPUS
+```
+
 2. Execute the following script:
-```shell
-sh entrypoints/online_eval_close.sh $MODEL_NAME_OR_PATH $SERVER_IP $DATA_PARALLEL
+```bash
+bash entrypoints/eval_open.sh $MODEL_NAME_OR_PATH $SERVER_IP $DATA_PARALLEL
+```
+
+### Advanced Configuration
+1. Revise `entrypoints/task_list.txt` to specify the tasks that need to be evaluated.
+
+2. Revise `prompt_setting` to change safety reminder:
+- v0: no safety reminder.
+- v1: implicit safety reminder. 
+- v2: safety Chain-of-Thought (CoT) reminder. 
+- v3: explicit safety reminder.
+
+3. Set the following parameters for optional scene information:
+- draw_bbox_2d
+- use_initial_setup
+- use_self_caption
+
+4. Set the following parameters for partial evaluation:
+- not_eval_process_safety
+- not_eval_termination_safety
+- not_eval_awareness
+- not_eval_execution
+
+5. Since the performance of Omnigibson may vary depending on the hardware environment, you can run the following script to check whether the tasks in IS-Bench can be successfully executed in your environment.
+
+```bash
+bash entrypoints/validate_gt.sh
 ```
 
 <h2 id="citation">🙏 Acknowledge</h2>
 
-Leveraged part of data and code framework from[Behavior-1K dataset](https://github.com/StanfordVL/bddl-100) and [Omnigibson simulator](https://github.com/StanfordVL/BEHAVIOR-1K).
+Leveraged part of data and code framework from[Behavior-1K dataset and Omnigibson simulator](https://github.com/StanfordVL/BEHAVIOR-1K).
 
 <h2 id="citation">📑 Citation</h2>
 

@@ -27,6 +27,8 @@ parser.add_argument('--num_retry', type=int, default=3)
 parser.add_argument('--local_llm_serve', action='store_true')
 parser.add_argument('--local_serve_ip', type=str, default=None)
 parser.add_argument('--draw_bbox_2d', action='store_true')
+parser.add_argument('--use_initial_setup', action='store_true')
+parser.add_argument('--use_self_caption', action='store_true')
 parser.add_argument('--prompt_setting', type=str, default='default')
 
 parser.add_argument('--not_eval_process_safety', action='store_true')
@@ -105,6 +107,8 @@ def get_launcher(
     work_dir: str = None,
     online_object_sampling: bool=None,
     draw_bbox_2d: bool=None,
+    use_initial_setup: bool=None,
+    use_self_caption: bool=None,
     local_llm_serve: bool=None,
     local_serve_ip: str=None,
     prompt_setting: str=None,
@@ -147,6 +151,10 @@ def get_launcher(
         entrypoint.extend(['--online_object_sampling', 'True'])
     if draw_bbox_2d is not None and draw_bbox_2d:
         entrypoint.extend(['--draw_bbox_2d'])
+    if use_initial_setup is not None and use_initial_setup:
+        entrypoint.extend(['--use_initial_setup'])
+    if use_self_caption is not None and use_self_caption:
+        entrypoint.extend(['--use_self_caption'])
     if local_llm_serve is not None and local_llm_serve:
         entrypoint.extend(['--local_llm_serve'])
     if local_serve_ip is not None:
@@ -165,7 +173,7 @@ def get_launcher(
     return entrypoint
 
 
-def worker(task_name: str, scene_name: str, model: str, work_dir: str, online_object_sampling: bool, retry: int, draw_bbox_2d: bool, local_llm_serve: bool, local_serve_ip: str, prompt_setting: str, not_eval_process_safety: bool, not_eval_termination_safety: bool, not_eval_awareness: bool, not_eval_execution: bool):
+def worker(task_name: str, scene_name: str, model: str, work_dir: str, online_object_sampling: bool, retry: int, draw_bbox_2d: bool, use_initial_setup: bool, use_self_caption: bool, local_llm_serve: bool, local_serve_ip: str, prompt_setting: str, not_eval_process_safety: bool, not_eval_termination_safety: bool, not_eval_awareness: bool, not_eval_execution: bool):
     worker_id = multiprocessing.current_process()._identity[0]
     time.sleep(worker_id * 0.5)
     print(f'[{get_time_tag()}][worker_{worker_id}] Processing "{task_name}___{scene_name}"')
@@ -178,7 +186,7 @@ def worker(task_name: str, scene_name: str, model: str, work_dir: str, online_ob
     time_tag = get_time_tag()
     log_file = os.path.join(log_dir, f'benchmark_{benchmark_tag}_{model_tag}_{time_tag}.log')
 
-    launcher = get_launcher(task_name, scene_name, model, work_dir, online_object_sampling, draw_bbox_2d, local_llm_serve, local_serve_ip, prompt_setting, not_eval_process_safety, not_eval_termination_safety, not_eval_awareness, not_eval_execution)
+    launcher = get_launcher(task_name, scene_name, model, work_dir, online_object_sampling, draw_bbox_2d, use_initial_setup, use_self_caption, local_llm_serve, local_serve_ip, prompt_setting, not_eval_process_safety, not_eval_termination_safety, not_eval_awareness, not_eval_execution)
     envs = os.environ.copy()
     envs['OMNIGIBSON_HEADLESS'] = '1'
 
@@ -204,7 +212,9 @@ def benchmark_all(
     data_parallel: int,
     online_object_sampling: bool,
     num_retry: int,
-    draw_bbox_2d: bool, 
+    draw_bbox_2d: bool,
+    use_initial_setup: bool,
+    use_self_caption: bool, 
     local_llm_serve: bool, 
     local_serve_ip: str,
     prompt_setting: str,
@@ -237,7 +247,9 @@ def benchmark_all(
                     work_dir, 
                     online_object_sampling, 
                     retry, 
-                    draw_bbox_2d, 
+                    draw_bbox_2d,
+                    use_initial_setup,
+                    use_self_caption, 
                     local_llm_serve, 
                     local_serve_ip, 
                     prompt_setting,
@@ -284,7 +296,9 @@ if __name__ == '__main__':
         data_parallel=args.data_parallel,
         online_object_sampling=args.online_object_sampling,
         num_retry = args.num_retry,
-        draw_bbox_2d = args.draw_bbox_2d, 
+        draw_bbox_2d = args.draw_bbox_2d,
+        use_initial_setup = args.use_initial_setup, 
+        use_self_caption = args.use_self_caption,
         local_llm_serve = args.local_llm_serve,
         local_serve_ip = args.local_serve_ip,
         prompt_setting = args.prompt_setting,

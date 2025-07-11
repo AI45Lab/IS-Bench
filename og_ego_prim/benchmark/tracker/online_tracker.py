@@ -16,6 +16,7 @@ class OnlineEvalTracker(EvalTracker):
         self.plans = []
         self.raw_outputs = []
         self.awareness = None
+        self.caption = None
 
         self.goal_condition = {}
         self.termination = None
@@ -48,6 +49,9 @@ class OnlineEvalTracker(EvalTracker):
     def track_awareness(self, **kwargs):
         self.awareness = dict(**kwargs)
     
+    def track_caption(self, **kwargs):
+        self.caption = dict(**kwargs)
+        
     def track_termination(self, **kwargs):
         self.termination = dict(**kwargs)
 

@@ -31,6 +31,8 @@ parser.add_argument('--local_serve_key', type=str, default="sk-123456")
 parser.add_argument('--work_dir', type=str, default='./work_dir')
 
 parser.add_argument('--draw_bbox_2d', action='store_true')
+parser.add_argument('--use_initial_setup', action='store_true')
+parser.add_argument('--use_self_caption', action='store_true')
 parser.add_argument('--online_object_sampling', type=bool, default=None)
 parser.add_argument('--debug', action='store_true')
 
@@ -51,6 +53,8 @@ def online_benchmark_once(
     local_serve_key: str,
     work_dir: str,
     draw_bbox_2d: bool,
+    use_initial_setup: bool,
+    use_self_caption: bool,
     online_object_sampling: bool,
     debug: bool,
     eval_process_safety: bool,
@@ -64,6 +68,8 @@ def online_benchmark_once(
         scene=scene, 
         ego_view=True,
         draw_bbox_2d=draw_bbox_2d,
+        use_initial_setup=use_initial_setup,
+        use_self_caption=use_self_caption,
         online_object_sampling=online_object_sampling, 
         debug=debug,
         eval_process_safety=eval_process_safety,
@@ -99,6 +105,8 @@ def online_benchmark_once(
             local_serve_key=local_serve_key, 
             debug=debug,
             prompt_setting=prompt_setting,
+            use_initial_setup=use_initial_setup,
+            use_self_caption=use_self_caption,
         )
         agent.set_tracker(benchmark.tracker)
         planner = agent.step(use_obs=True, max_step=(len(benchmark._example_planning) + 10))
@@ -106,11 +114,15 @@ def online_benchmark_once(
         planner = benchmark.get_example_planning()
 
     benchmark.get_surrounding_viewer_obs(save_img=os.path.join(output_dir, '0_init'))
+    if use_self_caption:
+        caption = agent.generate_caption(use_obs=True)
+        benchmark.tracker.track_caption(
+            content=caption
+        )
     if eval_awareness and (model or local_llm_serve):
         awareness = agent.generate_awareness(use_obs=True)
         benchmark.evaluate_awareness(awareness)
-    elif prompt_setting == 'v3':
-        # or prompt_setting == 'v2' or prompt_setting == 't2' or prompt_setting == 'c2': # vision v2 output awareness, convenient for eval SA
+    elif prompt_setting == 'v2':
         awareness = agent.generate_awareness(use_obs=True)
         benchmark.tracker.track_awareness(
             content=awareness,
@@ -123,7 +135,6 @@ def online_benchmark_once(
         return
 
     for i, plan in enumerate(planner):
-        # import ipdb ; ipdb.set_trace()
         if benchmark.execute_plan(plan) is False:
             break
         step_tag = f'{i+1}_' + plan['action'].replace('(', '__').replace(')', '__')
@@ -159,6 +170,8 @@ if __name__ == "__main__":
         prompt_setting=args.prompt_setting,
         work_dir=args.work_dir,
         draw_bbox_2d=args.draw_bbox_2d,
+        use_initial_setup=args.use_initial_setup,
+        use_self_caption=args.use_self_caption,
         online_object_sampling=args.online_object_sampling,
         debug=args.debug,
         eval_process_safety=(not args.not_eval_process_safety),
