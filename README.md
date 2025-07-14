@@ -38,6 +38,12 @@ VRAM: 8GB+
 GPU: NVIDIA RTX 2080+
 ```
 
+[Optional] If you are unable to support the environment required by the OmniGibson simulator, we have provided scene images from the golden planning execution process. You can use these images to construct QA pairs for VLM evaluation.
+
+```bash
+wget https://huggingface.co/datasets/Ursulalala/IS_Bench_dataset/resolve/main/scene_images.tar.gz
+```
+
 1. Install Omnigibson
 ``` bash
 conda create -n isbench python=3.10 pytorch torchvision torchaudio pytorch-cuda=12.1 "numpy<2" -c pytorch -c nvidia
