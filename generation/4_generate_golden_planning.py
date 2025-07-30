@@ -8,8 +8,8 @@ import re
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 
-key = "sk-ihZIMpMBjqvoKV2FCelDlOk6u6928oAfbGaTzKjQ444JbP0H" 
-url = "https://api.claudeshop.top/v1"
+key = os.getenv("OPENAI_API_KEY")
+url = os.getenv("OPENAI_API_URL")
 client = openai.OpenAI(api_key=key, base_url=url)
 
 root_path='data/tasks'
