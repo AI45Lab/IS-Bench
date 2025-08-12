@@ -2,7 +2,7 @@
 
 <span style="color:red">📢 <strong><i>We are currently organizing the code for IS-Bench. If you are interested in our work, please star ⭐ our project.</i></strong></span>
 
-<a href='https://www.arxiv.org/abs/2506.16402'><img src='https://img.shields.io/badge/Paper-Arxiv-red'></a> <a href='https://github.com/AI45Lab/IS-Bench'><img src='https://img.shields.io/badge/Project-Page-green'></a> <a href='https://huggingface.co/datasets/Ursulalala/IS_Bench_scenes'><img src='https://img.shields.io/badge/🤗-Dataset-blue'></a>
+<a href='https://www.arxiv.org/abs/2506.16402'><img src='https://img.shields.io/badge/Paper-Arxiv-red'></a> <a href='https://ursulalujun.github.io/isbench.github.io/'><img src='https://img.shields.io/badge/Project-Page-green'></a> <a href='https://huggingface.co/datasets/Ursulalala/IS_Bench_scenes'><img src='https://img.shields.io/badge/🤗-Dataset-blue'></a>
 </a>
 
 <h2 id="updates">🔥 Updates</h2>
