@@ -2,10 +2,12 @@
 
 <span style="color:red">📢 <strong><i>We are currently organizing the code for IS-Bench. If you are interested in our work, please star ⭐ our project.</i></strong></span>
 
-<a href='https://www.arxiv.org/abs/2506.16402'><img src='https://img.shields.io/badge/Paper-Arxiv-red'></a> <a href='https://ursulalujun.github.io/isbench.github.io/'><img src='https://img.shields.io/badge/Project-Page-green'></a> <a href='https://huggingface.co/datasets/Ursulalala/IS_Bench_scenes'><img src='https://img.shields.io/badge/🤗-Dataset-blue'></a>
+<a href='https://www.arxiv.org/abs/2506.16402'><img src='https://img.shields.io/badge/Paper-Arxiv-red'></a> <a href='https://github.com/AI45Lab/IS-Bench'><img src='https://img.shields.io/badge/Project-Page-green'></a> <a href='https://huggingface.co/datasets/Ursulalala/IS_Bench_scenes'><img src='https://img.shields.io/badge/🤗-Dataset-blue'></a>
 </a>
 
 <h2 id="updates">🔥 Updates</h2>
+
+📆[2025-11-08] 🎈 Our paper has been accepted to AAAI Conference. See you in Singapore~ 🎈
 
 📆[2025-07-07] 🎈 Our paper, code and dataset are released! 🎈
 
@@ -38,31 +40,42 @@ VRAM: 8GB+
 GPU: NVIDIA RTX 2080+
 ```
 
-[Optional] If you are unable to support the environment required by the OmniGibson simulator, we have provided scene images from the golden planning execution process. You can use these images to construct QA pairs for VLM evaluation.
-
+1. Install Vulkan
 ```bash
-wget https://huggingface.co/datasets/Ursulalala/IS_Bench_dataset/resolve/main/scene_images.tar.gz
+sudo apt update
+sudo apt install vulkan-utils libvulkan1
+vulkaninfo | grep "Vulkan Instance Version" # test
+export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json
+export LD_LIBRARY_PATH=/usr/local/nvidia/lib64:$LD_LIBRARY_PATH
+export PATH=/usr/local/nvidia/bin:$PATH
 ```
 
-1. Install Omnigibson
+2. Install Omnigibson
 ``` bash
 conda create -n isbench python=3.10 pytorch torchvision torchaudio pytorch-cuda=12.1 "numpy<2" -c pytorch -c nvidia
 conda activate isbench
-pip install omnigibson==1.1.1
+pip install omnigibson==1.1.1 --index-url https://pypi.org/simple
+python -m pip install --force-reinstall numpy scipy --index-url https://pypi.org/simple 
 python -m omnigibson.install    # install omnigibson assets and datasets
 ```
 
-If you want to install Omnigibson in Docker, please see this [document](https://behavior.stanford.edu/omnigibson/getting_started/installation.html#__tabbed_1_1).
+If you want to use Omnigibson in Docker, please see this [document](https://behavior.stanford.edu/omnigibson/getting_started/installation.html#__tabbed_1_1):
 
-2. Download Source Code and BDDL of IS-Bench
-``` bash
-git clone https://github.com/AI45Lab/IS-Bench
-pip install -r requirements.txt
-cd IS-Bench/bddl
-pip install -e .
+```bash
+docker pull stanfordvl/omnigibson:1.1.1 # this image has already contained Vulkan
+docker run stanfordvl/omnigibson:1.1.1
+micromamba run -n omnigibson pip install python -m omnigibson.install # install dataset
 ```
 
-3. Download Scene Dataset
+3. Download Source Code and BDDL of IS-Bench
+``` bash
+git clone https://github.com/AI45Lab/IS-Bench
+cd IS-Bench
+pip install -r requirements.txt # for docker image: micromamba run -n omnigibson pip install -r requirements.txt
+pip install -e ./bddl # for docker image: micromamba run -n omnigibson pip install -e ./bddl
+```
+
+4. Download Scene Dataset
 ``` bash
 cd ../data
 wget https://huggingface.co/datasets/Ursulalala/IS_Bench_scenes/resolve/main/scenes.tar.gz
